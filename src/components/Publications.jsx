@@ -130,7 +130,7 @@ const Publications = () => {
       await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/publications/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setPublications(publications.filter(pub => pub._id !== id));
+      setPublications(publications.filter(pub => pub._id !== id && pub.id !== id));
     } catch (err) {
       setError('Failed to delete publication.');
     }
@@ -326,7 +326,7 @@ const Publications = () => {
                           <button
                             className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow transition-colors z-10"
                             title="Delete publication"
-                            onClick={e => { e.stopPropagation(); handleDeletePublication(pub.id); }}
+                            onClick={e => { e.stopPropagation(); handleDeletePublication(pub._id || pub.id); }}
                           >
                             <XCircle className="w-5 h-5" />
                           </button>
@@ -379,7 +379,7 @@ const Publications = () => {
                       className="bg-red-600 hover:bg-red-700 p-2 rounded-full ml-2"
                       title="Delete publication"
                       onClick={() => {
-                        handleDeletePublication(lightboxPub.id);
+                        handleDeletePublication(lightboxPub._id || lightboxPub.id);
                         setLightboxPub(null);
                       }}
                     >
