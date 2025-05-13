@@ -54,19 +54,16 @@ const Publications = () => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    const loadData = () => {
+    // Fetch publications from backend
+    const fetchPublications = async () => {
       try {
-        const storedData = localStorage.getItem('publicationsData');
-        if (storedData) {
-          const parsedData = JSON.parse(storedData);
-          setPublications(Array.isArray(parsedData) ? parsedData : []);
-        }
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/publications`);
+        setPublications(res.data.publications || []);
       } catch (error) {
-        console.error('Error loading publications data:', error);
         setPublications([]);
       }
     };
-    loadData();
+    fetchPublications();
   }, []);
 
   // For previewing selected image from gallery
@@ -86,7 +83,7 @@ const Publications = () => {
   };
 
   // Handle publication submit
-  const handlePublish = (e) => {
+  const handlePublish = async (e) => {
     e.preventDefault();
     setError('');
     if (!selectedImage || !title.trim() || !description.trim()) {
@@ -103,32 +100,42 @@ const Publications = () => {
         console.warn('No firstName/lastName found on user object:', user);
       }
     }
-    const newPub = {
-      id: Date.now(),
-      image: selectedImage.filename,
-      title: title.trim(),
-      description: description.trim(),
-      createdAt: new Date().toISOString(),
-      isPublic: true,
-      username: pubUsername,
-      paid: publishType === 'paid' // Add paid flag
-    };
-
-    const updated = [newPub, ...publications];
-    setPublications(updated);
-    localStorage.setItem('publicationsData', JSON.stringify(updated));
-    setSelectedImage(null);
-    setTitle('');
-    setDescription('');
-    setPreviewUrl('');
+    const token = localStorage.getItem('token');
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/publications`,
+        {
+          image: selectedImage.filename,
+          title: title.trim(),
+          description: description.trim(),
+          isPublic: true,
+          username: pubUsername,
+          paid: publishType === 'paid'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setPublications([res.data.publication, ...publications]);
+      setSelectedImage(null);
+      setTitle('');
+      setDescription('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to publish.');
+    }
   };
 
   // Delete publication by id
-  const handleDeletePublication = (id) => {
-    const updated = publications.filter(pub => pub.id !== id);
-    setPublications(updated);
-    localStorage.setItem('publicationsData', JSON.stringify(updated));
+  const handleDeletePublication = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/publications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPublications(publications.filter(pub => pub._id !== id));
+    } catch (err) {
+      setError('Failed to delete publication.');
+    }
   };
+
 
   // Compress image in-browser for low quality download
   const compressAndDownload = async (url, filename) => {
