@@ -86,7 +86,7 @@ const YourPhotos = () => {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/photos', {
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/photos`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setGallery(res.data.photos || []);
@@ -136,14 +136,14 @@ const YourPhotos = () => {
         formData.append('photo', files[i]);
       }
       try {
-        await axios.post('http://localhost:5000/api/photos/upload', formData, {
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/photos/upload`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
           }
         });
         // Refresh gallery after upload
-        const res = await axios.get('http://localhost:5000/api/photos', {
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/photos`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setGallery(res.data.photos || []);
@@ -164,7 +164,7 @@ const YourPhotos = () => {
   const handleDelete = async (photoId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/photos/${photoId}`, {
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/photos/${photoId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setGallery(gallery.filter(p => p._id !== photoId));
@@ -252,7 +252,7 @@ const YourPhotos = () => {
                       {gallery.map(photo => (
                         <div key={photo._id} className="relative group">
                           <img
-                            src={`http://localhost:5000/uploads/${photo.filename}`}
+                            src={`${process.env.REACT_APP_BACKEND_URL}/uploads/${photo.filename}`}
                             alt={photo.originalname || 'Uploaded'}
                             className="rounded-lg w-full h-40 object-cover border border-slate-700/30 cursor-pointer"
                             onClick={() => openLightbox(photo)}
@@ -264,7 +264,7 @@ const YourPhotos = () => {
                             title="Download photo"
                             onClick={e => {
                               e.stopPropagation();
-                              downloadImage(`http://localhost:5000/uploads/${photo.filename}`, photo.originalname || photo.filename);
+                              downloadImage(`${process.env.REACT_APP_BACKEND_URL}/uploads/${photo.filename}`, photo.originalname || photo.filename);
                             }}
                           >
                             <DownloadIcon className="w-5 h-5" />
@@ -293,7 +293,7 @@ const YourPhotos = () => {
                               <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
                             </button>
                             <img
-                              src={`http://localhost:5000/uploads/${lightboxPhoto.filename}`}
+                              src={`${process.env.REACT_APP_BACKEND_URL}/uploads/${lightboxPhoto.filename}`}
                               alt={lightboxPhoto.originalname || 'Uploaded'}
                               className="rounded-lg w-full max-h-[80vh] object-contain border border-slate-700/30 shadow-2xl"
                             />
@@ -324,7 +324,7 @@ const YourPhotos = () => {
                               title="Download photo"
                               onClick={e => {
                                 e.stopPropagation();
-                                downloadImage(`http://localhost:5000/uploads/${lightboxPhoto.filename}`, lightboxPhoto.originalname || lightboxPhoto.filename);
+                                downloadImage(`${process.env.REACT_APP_BACKEND_URL}/uploads/${lightboxPhoto.filename}`, lightboxPhoto.originalname || lightboxPhoto.filename);
                               }}
                             >
                               <DownloadIcon className="w-7 h-7" />
