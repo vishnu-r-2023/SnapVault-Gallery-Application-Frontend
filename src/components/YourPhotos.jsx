@@ -138,8 +138,7 @@ const YourPhotos = () => {
       try {
         await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/photos/upload`, formData, {
           headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
+            Authorization: `Bearer ${token}`
           }
         });
         // Refresh gallery after upload
