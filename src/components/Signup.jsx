@@ -78,7 +78,7 @@ const Signup = () => {
     <div className="bg-slate-800/70 backdrop-blur-md rounded-2xl p-3 sm:p-8 shadow-2xl border border-slate-700/40 relative overflow-hidden">
       {/* Watermark SnapVault logo */}
       <img 
-        src="/GalleryApp-logo.png" 
+        src="/GalleryApp-Logo.png" 
         alt="SnapVault Watermark" 
         className="absolute top-0.5 left-1/2 w-20 h-20 opacity-15 pointer-events-none select-none z-0 transform -translate-x-1/2"
         style={{opacity:0.40}}
@@ -252,4 +252,4 @@ const Signup = () => {
   );
 };
 
-export default Signup; 
+export default Signup;
